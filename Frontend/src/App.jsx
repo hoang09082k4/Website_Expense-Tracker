@@ -7,8 +7,8 @@ import { formatCurrency } from './utils/formatCurrency'
 import { isInFilterRange } from './utils/transactionFilters'
 import './App.css'
 
-// Tự động lấy URL từ .env, nếu quên cấu hình thì mặc định gọi cổng 3000 của Next.js
-const API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Tự động lấy URL từ .env, nếu quên cấu hình thì ưu tiên gọi bản deploy để test
+const API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'https://website-expense-tracker.vercel.app';
 
 const getFilterLabel = (filterType) => {
   if (filterType === 'day') return 'Theo ngày'
