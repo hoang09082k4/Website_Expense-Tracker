@@ -13,7 +13,7 @@ export async function OPTIONS() {
 export async function GET() {
   try {
     // Gọi thử vào Supabase (Bảng transactions)
-    const { data, error } = await supabase.from('transactions').select('*').limit(1);
+    const { error } = await supabase.from('transactions').select('*').limit(1);
 
     if (error) throw error;
 
