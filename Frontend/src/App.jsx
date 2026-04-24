@@ -84,7 +84,11 @@ function App() {
   }, [])
 
   useEffect(() => {
-    loadTransactions()
+    const timeoutId = window.setTimeout(() => {
+      void loadTransactions()
+    }, 0)
+
+    return () => window.clearTimeout(timeoutId)
   }, [loadTransactions])
 
   useEffect(() => {
