@@ -9,4 +9,8 @@ dotenv.config({ path: path.resolve(process.cwd(), '../.env') });
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-export const supabase = createClient(supabaseUrl, supabaseServiceKey);
+export const hasSupabaseConfig = Boolean(supabaseUrl && supabaseServiceKey);
+
+export const supabase = hasSupabaseConfig
+	? createClient(supabaseUrl, supabaseServiceKey)
+	: null;

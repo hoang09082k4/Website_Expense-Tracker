@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 
 // Dùng alias @/ để Next.js tự động tìm từ thư mục gốc, không lo sai dấu chấm (../) nữa
-import { supabase } from '../config/supabase';
+import { hasSupabaseConfig, supabase } from '../config/supabase';
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -15,6 +15,13 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
+    if (!hasSupabaseConfig || !supabase) {
+      return NextResponse.json(
+        { message: 'Thiếu cấu hình Supabase trên server.' },
+        { status: 500, headers: corsHeaders }
+      );
+    }
+
     const { data: rows, error } = await supabase
       .from('transactions')
       .select('id, title, amount, category_name, date, createdAt')
@@ -44,6 +51,13 @@ export async function GET() {
 
 export async function POST(request) {
   try {
+    if (!hasSupabaseConfig || !supabase) {
+      return NextResponse.json(
+        { message: 'Thiếu cấu hình Supabase trên server.' },
+        { status: 500, headers: corsHeaders }
+      );
+    }
+
     const body = await request.json();
     const { title, amount, category, date, createdAt } = body;
 

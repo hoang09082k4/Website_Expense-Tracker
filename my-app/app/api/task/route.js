@@ -1,9 +1,16 @@
 // app/api/tasks/route.js
 import { NextResponse } from 'next/server';
-import { supabase } from '../config/supabase'; 
+import { hasSupabaseConfig, supabase } from '../config/supabase'; 
 
 export async function POST(request) {
   try {
+    if (!hasSupabaseConfig || !supabase) {
+      return NextResponse.json(
+        { error: 'Thiếu cấu hình Supabase trên server.' },
+        { status: 500 }
+      );
+    }
+
     const body = await request.json();
     console.log("👉 [API Tasks] Nhận được dữ liệu:", body); // Kiểm tra xem Frontend có gửi data lên không
 
