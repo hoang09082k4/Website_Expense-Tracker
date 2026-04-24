@@ -1,0 +1,111 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  docker-compose-validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate docker-compose
+        run: docker compose -f docker-compose.yml config
+
+  frontend-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: Frontend/package-lock.json
+
+      - name: Install Frontend dependencies
+        run: npm ci
+        working-directory: ./Frontend
+
+      - name: Lint Frontend
+        run: npm run lint
+        working-directory: ./Frontend
+
+      - name: Test Frontend
+        run: npm run test --if-present
+        working-directory: ./Frontend
+      
+      - name: Build Frontend
+        run: npm run build
+        working-directory: ./Frontend
+
+  my-app-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install my-app dependencies
+        run: npm ci
+        working-directory: ./
+
+      - name: Lint my-app
+        run: npm run lint
+        working-directory: ./
+
+      - name: Test my-app
+        run: npm run test --if-present
+        working-directory: ./
+      
+      - name: Build my-app
+        run: npm run build
+        working-directory: ./
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+  expense-manager-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: expense-manager/package-lock.json
+
+      - name: Install expense-manager dependencies
+        run: npm ci
+        working-directory: ./expense-manager
+
+      - name: Lint expense-manager
+        run: npm run lint
+        working-directory: ./expense-manager
+
+      - name: Test expense-manager
+        run: npm run test --if-present
+        working-directory: ./expense-manager
+      
+      - name: Build expense-manager
+        run: npm run build
+        working-directory: ./expense-manager
