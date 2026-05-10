@@ -23,15 +23,18 @@ FROM nginx:alpine
 # Copy built files to nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy nginx config
+# Copy nginx config with resolver for Docker DNS
 RUN echo 'server { \
     listen 80; \
+    resolver 127.0.0.11 valid=10s; \
+    resolver_timeout 5s; \
     location / { \
         root /usr/share/nginx/html; \
         try_files $uri $uri/ /index.html; \
     } \
     location /api { \
-        proxy_pass http://my-app:3000; \
+        set $upstream http://my-app:3000; \
+        proxy_pass $upstream; \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
