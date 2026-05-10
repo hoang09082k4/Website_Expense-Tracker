@@ -83,6 +83,10 @@ function App() {
     return () => window.clearInterval(timerId)
   }, [])
 
+  // Calling `loadTransactions` triggers state updates inside that function.
+  // Suppress the ESLint rule that forbids calling setState directly from effects
+  // because the call is intentionally deferred via `setTimeout`.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       void loadTransactions()
