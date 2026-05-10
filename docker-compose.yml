@@ -41,7 +41,7 @@ services:
 
   expense-manager:
     build:
-      context: ./expense-manager
+      context: ./my-app/expense-manager
       dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
