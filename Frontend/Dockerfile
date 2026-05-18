@@ -13,7 +13,7 @@ RUN npm ci
 COPY . .
 
 # Build Vite app
-ARG VITE_API_URL=http://localhost:3000/api
+ARG VITE_API_URL=http://my-app:3000
 ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
 
@@ -34,7 +34,11 @@ RUN echo 'server { \
     } \
     location /api { \
         set $upstream http://my-app:3000; \
-        proxy_pass $upstream; \
+        proxy_set_header Host $host; \
+        proxy_set_header X-Real-IP $remote_addr; \
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
+        proxy_set_header X-Forwarded-Proto $scheme; \
+        proxy_pass $upstream$request_uri; \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
